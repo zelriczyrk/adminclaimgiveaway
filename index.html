@@ -21,3 +21,113 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
+<style>
+body{
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.item{
+background:#222;
+padding:15px;
+margin:15px;
+border-radius:10px;
+}
+
+button{
+padding:8px 15px;
+margin:5px;
+font-size:16px;
+}
+</style>
+
+<script type="module">
+
+// Dán firebaseConfig của bạn vào đây
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+// Dán config của bạn
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadClaims(){
+
+let html="";
+
+const querySnapshot=await getDocs(collection(db,"claims"));
+
+querySnapshot.forEach((d)=>{
+
+const data=d.data();
+
+html+=`
+<div class="item">
+<h3>${data.username}</h3>
+<p>Robux : ${data.robux}</p>
+<p>Status : ${data.status}</p>
+
+<button onclick="approve('${d.id}')">
+Approve
+</button>
+
+<button onclick="reject('${d.id}')">
+Reject
+</button>
+
+</div>
+`;
+
+});
+
+document.getElementById("list").innerHTML=html;
+
+}
+
+window.approve=async function(id){
+
+await updateDoc(doc(db,"claims",id),{
+status:"Approved"
+});
+
+location.reload();
+
+}
+
+window.reject=async function(id){
+
+await updateDoc(doc(db,"claims",id),{
+status:"Rejected"
+});
+
+location.reload();
+
+}
+
+window.onload=loadClaims;
+
+</script>
+
+</head>
+
+<body>
+
+<h1>Admin Claim Giveaway</h1>
+
+<div id="list"></div>
+
+</body>
+
+</html>
