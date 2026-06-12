@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <title>Admin Panel</title>
 <style>
-    body { background: #0a0a0a; color: #fff; font-family: 'Arial', sans-serif; text-align: center; }
+    body { 
+        background: radial-gradient(circle, #2a1a1a 0%, #1a0f0f 100%); 
+        color: #fff; font-family: 'Arial', sans-serif; text-align: center; min-height: 100vh;
+    }
     .item { 
-        background: #1a1a1a; padding: 15px; margin: 15px; border-radius: 15px;
-        border: 1px solid #ff00ff; /* Màu hồng neon */
-        box-shadow: 0 0 10px #ff00ff;
+        background: #251616; padding: 20px; margin: 20px auto; width: 300px; 
+        border-radius: 15px; border: 1px solid #ff4757;
+        box-shadow: 0 0 15px #ff4757;
     }
-    h1 { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
-    button { 
-        padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; 
-        border: none; border-radius: 5px; font-weight: bold;
-    }
-    .btn-approve { background: #00ff41; box-shadow: 0 0 10px #00ff41; color: #000; }
-    .btn-reject { background: #ff0041; box-shadow: 0 0 10px #ff0041; color: #fff; }
+    h1 { text-shadow: 0 0 10px #ff4757; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+    .btn-approve { background: #2ed573; box-shadow: 0 0 10px #2ed573; }
+    .btn-reject { background: #ff4757; box-shadow: 0 0 10px #ff4757; color: white; }
 </style>
 </head>
 <body>
@@ -48,7 +48,7 @@
             html += `
             <div class="item">
                 <h3>User: ${data.username}</h3>
-                <p>Robux Amount: ${data.robux}</p>
+                <p>Robux: ${data.robux}</p>
                 <p><strong>Status: ${data.status}</strong></p>
                 <button class="btn-approve" onclick="updateStatus('${d.id}', 'Approved')">Approve</button>
                 <button class="btn-reject" onclick="updateStatus('${d.id}', 'Rejected')">Reject</button>
@@ -58,17 +58,12 @@
     }
 
     window.updateStatus = async function(id, status) {
-        try {
-            await updateDoc(doc(db, "claims", id), { status: status });
-            alert("Status updated to: " + status);
-            location.reload();
-        } catch (e) {
-            alert("Error updating status: " + e.message);
-        }
+        await updateDoc(doc(db, "claims", id), { status: status });
+        alert("Status updated to: " + status);
+        location.reload();
     }
 
     window.onload = loadClaims;
 </script>
 </body>
 </html>
-
