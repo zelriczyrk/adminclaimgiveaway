@@ -1,133 +1,66 @@
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyDNatItZjr5377IioYH_dkBj2ymwJSNFFI",
-    authDomain: "zrcg-31419.firebaseapp.com",
-    projectId: "zrcg-31419",
-    storageBucket: "zrcg-31419.firebasestorage.app",
-    messagingSenderId: "718920885368",
-    appId: "1:718920885368:web:78f798e22e5a1a2733798d",
-    measurementId: "G-DDLETL2XVW"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Admin Panel</title>
-
 <style>
-body{
-background:#111;
-color:white;
-font-family:Arial;
-text-align:center;
-}
-
-.item{
-background:#222;
-padding:15px;
-margin:15px;
-border-radius:10px;
-}
-
-button{
-padding:8px 15px;
-margin:5px;
-font-size:16px;
-}
+    body { background: #111; color: white; font-family: Arial; text-align: center; }
+    .item { background: #222; padding: 15px; margin: 15px; border-radius: 10px; border: 1px solid #444; }
+    button { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; }
+    .btn-approve { background: #2ecc71; color: white; }
+    .btn-reject { background: #e74c3c; color: white; }
 </style>
-
-<script type="module">
-
-// Dán firebaseConfig của bạn vào đây
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-const firebaseConfig = {
-// Dán config của bạn
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-async function loadClaims(){
-
-let html="";
-
-const querySnapshot=await getDocs(collection(db,"claims"));
-
-querySnapshot.forEach((d)=>{
-
-const data=d.data();
-
-html+=`
-<div class="item">
-<h3>${data.username}</h3>
-<p>Robux : ${data.robux}</p>
-<p>Status : ${data.status}</p>
-
-<button onclick="approve('${d.id}')">
-Approve
-</button>
-
-<button onclick="reject('${d.id}')">
-Reject
-</button>
-
-</div>
-`;
-
-});
-
-document.getElementById("list").innerHTML=html;
-
-}
-
-window.approve=async function(id){
-
-await updateDoc(doc(db,"claims",id),{
-status:"Approved"
-});
-
-location.reload();
-
-}
-
-window.reject=async function(id){
-
-await updateDoc(doc(db,"claims",id),{
-status:"Rejected"
-});
-
-location.reload();
-
-}
-
-window.onload=loadClaims;
-
-</script>
-
 </head>
-
 <body>
 
 <h1>Admin Claim Giveaway</h1>
-
 <div id="list"></div>
 
-</body>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNatItZjr5377IioYH_dkBj2ymwJSNFFI",
+        authDomain: "zrcg-31419.firebaseapp.com",
+        projectId: "zrcg-31419",
+        storageBucket: "zrcg-31419.firebasestorage.app",
+        messagingSenderId: "718920885368",
+        appId: "1:718920885368:web:78f798e22e5a1a2733798d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadClaims() {
+        const querySnapshot = await getDocs(collection(db, "claims"));
+        let html = "";
+        querySnapshot.forEach((d) => {
+            const data = d.data();
+            html += `
+            <div class="item">
+                <h3>User: ${data.username}</h3>
+                <p>Robux Amount: ${data.robux}</p>
+                <p><strong>Status: ${data.status}</strong></p>
+                <button class="btn-approve" onclick="updateStatus('${d.id}', 'Approved')">Approve</button>
+                <button class="btn-reject" onclick="updateStatus('${d.id}', 'Rejected')">Reject</button>
+            </div>`;
+        });
+        document.getElementById("list").innerHTML = html || "<p>No claims found.</p>";
+    }
+
+    window.updateStatus = async function(id, status) {
+        try {
+            await updateDoc(doc(db, "claims", id), { status: status });
+            alert("Status updated to: " + status);
+            location.reload();
+        } catch (e) {
+            alert("Error updating status: " + e.message);
+        }
+    }
+
+    window.onload = loadClaims;
+</script>
+</body>
 </html>
+
