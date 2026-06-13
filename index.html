@@ -4,24 +4,19 @@
 <meta charset="UTF-8">
 <title>Admin Panel</title>
 <style>
-    body { 
-        background: radial-gradient(circle, #2a1a1a 0%, #1a0f0f 100%); 
-        color: #fff; font-family: 'Arial', sans-serif; text-align: center; min-height: 100vh;
-    }
+    body { background: radial-gradient(circle, #2a1a1a 0%, #1a0f0f 100%); color: #fff; font-family: 'Arial', sans-serif; text-align: center; min-height: 100vh; padding: 20px; }
     .item { 
-        background: #251616; padding: 20px; margin: 20px auto; width: 300px; 
-        border-radius: 15px; border: 1px solid #ff4757;
-        box-shadow: 0 0 15px #ff4757;
+        background: #251616; padding: 20px; margin: 15px auto; width: 300px; 
+        border-radius: 15px; border: 1px solid #ff4757; box-shadow: 0 0 15px #ff4757;
     }
-    h1 { text-shadow: 0 0 10px #ff4757; }
     button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
-    .btn-approve { background: #2ed573; box-shadow: 0 0 10px #2ed573; }
-    .btn-reject { background: #ff4757; box-shadow: 0 0 10px #ff4757; color: white; }
+    .btn-approve { background: #2ed573; color: black; }
+    .btn-reject { background: #ff4757; color: white; }
 </style>
 </head>
 <body>
 
-<h1>Admin Claim Giveaway</h1>
+<h1>Admin Panel</h1>
 <div id="list"></div>
 
 <script type="module">
@@ -47,22 +42,20 @@
             const data = d.data();
             html += `
             <div class="item">
-                <h3>User: ${data.username}</h3>
-                <p>Robux: ${data.robux}</p>
-                <p><strong>Status: ${data.status}</strong></p>
+                <h3>${data.username}</h3>
+                <p>Amount: ${data.robux}</p>
+                <p>Status: <strong>${data.status}</strong></p>
                 <button class="btn-approve" onclick="updateStatus('${d.id}', 'Approved')">Approve</button>
                 <button class="btn-reject" onclick="updateStatus('${d.id}', 'Rejected')">Reject</button>
             </div>`;
         });
-        document.getElementById("list").innerHTML = html || "<p>No claims found.</p>";
+        document.getElementById("list").innerHTML = html;
     }
 
-    window.updateStatus = async function(id, status) {
+    window.updateStatus = async (id, status) => {
         await updateDoc(doc(db, "claims", id), { status: status });
-        alert("Status updated to: " + status);
         location.reload();
     }
-
     window.onload = loadClaims;
 </script>
 </body>
