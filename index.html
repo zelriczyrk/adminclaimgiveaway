@@ -4,11 +4,15 @@
 <meta charset="UTF-8">
 <title>Admin Panel</title>
 <style>
-    body { background: radial-gradient(circle, #2a1a1a 0%, #1a0f0f 100%); color: #fff; font-family: 'Arial', sans-serif; text-align: center; min-height: 100vh; padding: 20px; }
+    body { 
+        background: radial-gradient(circle, #2a1a1a 0%, #1a0f0f 100%); 
+        color: #fff; font-family: 'Arial', sans-serif; text-align: center; min-height: 100vh; padding: 20px;
+    }
     .item { 
         background: #251616; padding: 20px; margin: 15px auto; width: 300px; 
         border-radius: 15px; border: 1px solid #ff4757; box-shadow: 0 0 15px #ff4757;
     }
+    h1 { text-shadow: 0 0 10px #ff4757; }
     button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
     .btn-approve { background: #2ed573; color: black; }
     .btn-reject { background: #ff4757; color: white; }
@@ -21,7 +25,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDNatItZjr5377IioYH_dkBj2ymwJSNFFI",
@@ -45,17 +49,27 @@
                 <h3>${data.username}</h3>
                 <p>Amount: ${data.robux}</p>
                 <p>Status: <strong>${data.status}</strong></p>
-                <button class="btn-approve" onclick="updateStatus('${d.id}', 'Approved')">Approve</button>
-                <button class="btn-reject" onclick="updateStatus('${d.id}', 'Rejected')">Reject</button>
+                <button class="btn-approve" onclick="approve('${d.id}')">Approve</button>
+                <button class="btn-reject" onclick="reject('${d.id}')">Reject</button>
             </div>`;
         });
-        document.getElementById("list").innerHTML = html;
+        document.getElementById("list").innerHTML = html || "<p>No claims found.</p>";
     }
 
-    window.updateStatus = async (id, status) => {
-        await updateDoc(doc(db, "claims", id), { status: status });
+    // Nút Duyệt: Giữ nguyên
+    window.approve = async (id) => {
+        await updateDoc(doc(db, "claims", id), { status: "Approved" });
         location.reload();
     }
+
+    // Nút Từ chối: Đã sửa thành XÓA (Delete)
+    window.reject = async (id) => {
+        if(confirm("Are you sure you want to delete this request?")) {
+            await deleteDoc(doc(db, "claims", id));
+            location.reload();
+        }
+    }
+
     window.onload = loadClaims;
 </script>
 </body>
